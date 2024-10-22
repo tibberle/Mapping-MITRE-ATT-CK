@@ -3,10 +3,16 @@ from dash import dcc, html
 import pandas as pd
 from dash.dependencies import Input, Output
 import plotly.express as px
+import os
 
 # Load your dataset from an Excel file, reading all sheets into a dictionary
-file_path = './enterprise-attack-v15.1 1.xlsx'
+# Get the current script's directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Create the relative file path
+file_path = os.path.join(current_dir, "./enterprise-attack-v15.1.xlsx")
 sheets = pd.read_excel(file_path, sheet_name=None)
+
 
 # Select the relevant sheets for techniques and data analysis
 techniques = sheets['techniques']
@@ -53,7 +59,7 @@ platform_options = [
 
 # Create a Dash app and include external stylesheets for Bootstrap
 external_stylesheets = ['https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css']
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
 
 # Function to create a table of techniques grouped by tactics
 def create_tactic_table():
@@ -298,7 +304,7 @@ def render_content(tab, pathname):
 )
 def update_filter_results(n_clicks, selected_tactics, selected_platforms):
     # When the search button is clicked, update the filter results
-    if n_clicks > 0:
+    if n_clicks is not None and n_clicks > 0:
         return filter_techniques(selected_tactics, selected_platforms)
     return ""
 
